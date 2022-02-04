@@ -2,7 +2,7 @@ import json
 
 from flask import Flask, render_template, request, abort
 
-from utils import get_id_or_400, set_finished, get_answer, random_word
+from utils import get_id_or_400, set_finished, get_answer, random_word, word_is_valid
 from sql import get_sql
 
 app = Flask(__name__)
@@ -13,7 +13,7 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/start_game/")
+@app.route("/start_game/", methods=["POST"])
 def start_game():
     """
     Starts a new game
@@ -35,6 +35,7 @@ def guess_word():
         guess = request.form["guess"]
         assert len(guess) == 5
         assert guess.isalpha()
+        assert word_is_valid(guess)
     except AssertionError:
         return abort(400, "Invalid word")
 

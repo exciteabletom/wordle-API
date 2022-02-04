@@ -963,7 +963,6 @@ clove
 clown
 cluck
 clump
-co-ed
 coach
 coaid
 coals
@@ -1153,7 +1152,6 @@ cycle
 cygne
 cynic
 czech
-d-day
 dabri
 dacca
 dacha
@@ -1830,7 +1828,6 @@ fussy
 fusty
 futon
 fuzzy
-g-man
 gabel
 gable
 gabon
@@ -2145,7 +2142,6 @@ heure
 hevea
 hewer
 hexed
-hi-fi
 hider
 hight
 hiker
@@ -3117,7 +3113,6 @@ nixon
 nizam
 njord
 no(a)
-no-go
 noahs
 nobis
 noble
@@ -3131,7 +3126,6 @@ noisy
 nolle
 nomad
 nomia
-non-u
 nonce
 nones
 nonny
@@ -4473,8 +4467,6 @@ synod
 syria
 syrup
 syrus
-t-bar
-t-man
 tabby
 tabes
 tabid
@@ -4877,7 +4869,6 @@ utter
 uveal
 uvula
 uzbek
-v-day
 vache
 vaduz
 vagal
@@ -5166,7 +5157,6 @@ yeild
 yemen
 yenta
 yield
-yo-yo
 yodel
 yokel
 young

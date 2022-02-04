@@ -1,3 +1,6 @@
+"""
+Module for handling the messy bits of SQL.
+"""
 import sqlite3
 
 

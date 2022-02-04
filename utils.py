@@ -4,11 +4,18 @@ from werkzeug.exceptions import abort
 
 from sql import get_sql
 
+# Use set for "var in word_set"
+# Use list for everything else
 word_list = open("word_list.txt", "r").read().split("\n")
+word_set = set(word_list)
 
 
 def random_word():
-    return word_list[randint(0, len(word_list) - 1)]
+    return word_list[randint(0, len(word_set) - 1)]
+
+
+def word_is_valid(word):
+    return word in word_set
 
 
 def get_id_or_400(request):
