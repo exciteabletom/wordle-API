@@ -1,27 +1,24 @@
-import sqlite3
 import json
 
 from flask import Flask, render_template, request, abort
 
-from words import random_word
-
-
-def get_sql():
-    con = sqlite3.connect("wordle.db")
-    cur = con.cursor()
-    return con, cur
-
+from utils import get_id_or_400, set_finished, get_answer, random_word
+from sql import get_sql
 
 app = Flask(__name__)
 
 
-@app.route('/')
-def index():  # put application's code here
+@app.route("/")
+def index():
     return render_template("index.html")
 
 
 @app.route("/start_game/")
 def start_game():
+    """
+    Starts a new game
+    :return: {"id": game_id}
+    """
     con, cur = get_sql()
 
     word = random_word()
@@ -35,16 +32,18 @@ def start_game():
 @app.route("/guess/", methods=["POST"])
 def guess_word():
     try:
-        game_id = request.form["id"]
         guess = request.form["guess"]
         assert len(guess) == 5
-    except (KeyError, AssertionError):
-        return abort(400)
+        assert guess.isalpha()
+    except AssertionError:
+        return abort(400, "Invalid word")
 
-    game_id = int(game_id)
+    game_id = get_id_or_400(request)
 
     con, cur = get_sql()
-    cur.execute("""SELECT word, guesses, finished FROM game WHERE id = (?)""", (game_id,))
+    cur.execute(
+        """SELECT word, guesses, finished FROM game WHERE id = (?)""", (game_id,)
+    )
     answer, guesses, finished = cur.fetchone()
 
     # Avoids ValueError if guesses is empty
@@ -73,13 +72,24 @@ def guess_word():
                 if g_char == a_char and g_pos == a_pos:
                     status_int += 1
 
-        guess_status.append({
-            "char": g_char,
-            "status": status_int,
-        })
+        guess_status.append(
+            {
+                "char": g_char,
+                "status": status_int,
+            }
+        )
 
     return json.dumps(guess_status)
 
 
-if __name__ == '__main__':
+@app.route("/finish_game/", methods=["POST"])
+def finish_game():
+    game_id = get_id_or_400(request)
+    set_finished(game_id)
+    answer = get_answer(game_id)
+
+    return json.dumps({"answer": answer})
+
+
+if __name__ == "__main__":
     app.run()
