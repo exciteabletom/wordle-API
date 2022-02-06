@@ -8,12 +8,14 @@ from sql import get_sql
 app = Flask(__name__)
 
 
+# Frontend views
 @app.route("/")
 def index():
     return render_template("index.html")
 
 
-@app.route("/start_game/", methods=["POST"])
+# API endpoints
+@app.route("/api/start_game/", methods=["POST"])
 def start_game():
     """
     Starts a new game
@@ -29,7 +31,7 @@ def start_game():
     return json.dumps({"id": cur.lastrowid})
 
 
-@app.route("/guess/", methods=["POST"])
+@app.route("/api/guess/", methods=["POST"])
 def guess_word():
     try:
         guess = request.form["guess"]
@@ -47,7 +49,6 @@ def guess_word():
     )
     answer, guesses, finished = cur.fetchone()
 
-    # Avoids ValueError if guesses is empty
     guesses = guesses.split(",")
 
     if len(guesses) > 6 or finished:
@@ -83,7 +84,7 @@ def guess_word():
     return json.dumps(guess_status)
 
 
-@app.route("/finish_game/", methods=["POST"])
+@app.route("/api/finish_game/", methods=["POST"])
 def finish_game():
     game_id = get_id_or_400(request)
     set_finished(game_id)

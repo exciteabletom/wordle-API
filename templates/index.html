@@ -1,12 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    {% include "meta.html" %}
     <title>Wordle</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="{{ url_for("static", filename="/lib/vue.js") }}"></script>
+    <script src="{{ url_for("static", filename="lib/simple-keyboard.js") }}"></script>
+    <script src="{{ url_for("static", filename="js/wordle.js") }}" defer></script>
+    <script src="{{ url_for("static", filename="js/keyboard.js") }}" defer></script>
+
+    <link href="{{ url_for("static", filename="lib/simple-keyboard.css") }}" type="text/css" rel="stylesheet">
 </head>
 <body>
-<div id="game">
-</div>
+<header>
+    <h1>Tom's Wordle</h1>
+</header>
+<main id="vue-root">
+    <div id="game">
+        <div class="game-row" v-for="row in grid">
+            <div class="game-cell" v-bind:class="letterShading(letterObj)" v-for="letterObj in row">
+                <span>[[ letterObj.letter ]]</span>
+            </div>
+        </div>
+    </div>
+    <div class="simple-keyboard"></div>
+</main>
 </body>
 </html>

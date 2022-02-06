@@ -1,3 +1,69 @@
+:root {
+    --color-bg: #121212;
+    --color-accent: #5b5b5b;
+    --color-accent-alt: #3f3f3f;
+
+    --color-absent: #3a3a3c;
+    --color-present: #b59f3b;
+    --color-correct: #538d4e;
+}
+
+body {
+    background: var(--color-bg);
+}
+
 #game {
+    box-sizing: border-box;
+    width: max-content;
+
     display: grid;
+    grid-template-rows: repeat(6, 1fr);
+    gap: 0.5rem;
+
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.game-row {
+    width: max-content;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-content: center;
+    gap: 0.5rem;
+}
+
+.game-cell {
+    display: flex;
+    width: 1.8rem;
+    height: 1.8rem;
+
+    font-size: 3rem;
+    text-align: center;
+
+    padding: 1rem;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid var(--color-accent-alt);
+}
+
+.game-cell > span {
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.cell-empty {
+    background: var(--color-bg);
+    border-color: var(--color-accent);
+}
+
+.cell-absent {
+    background: var(--color-absent);
+}
+
+.cell-present {
+    background: var(--color-present);
+}
+
+.cell-correct{
+    background: var(--color-correct);
 }
