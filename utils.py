@@ -20,7 +20,7 @@ def word_is_valid(word):
 
 def get_id_or_400(request):
     try:
-        game_id = request.form["id"]
+        game_id = request.get_json(force=True)["id"]
         game_id = int(game_id)
         return game_id
     except (KeyError, TypeError):

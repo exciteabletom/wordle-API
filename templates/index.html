@@ -3,7 +3,7 @@
 <head>
     {% include "meta.html" %}
     <title>Wordle</title>
-    <script src="{{ url_for("static", filename="/lib/vue.js") }}"></script>
+    <script src="{{ url_for("static", filename="/lib/vue-dev.js") }}"></script>
     <script src="{{ url_for("static", filename="lib/simple-keyboard.js") }}"></script>
     <script src="{{ url_for("static", filename="js/wordle.js") }}" defer></script>
     <script src="{{ url_for("static", filename="js/keyboard.js") }}" defer></script>
@@ -22,7 +22,9 @@
             </div>
         </div>
     </div>
-    <div class="simple-keyboard"></div>
+    <div class="simple-keyboard-wrapper">
+        <div class="simple-keyboard"></div>
+    </div>
 </main>
 </body>
 </html>

@@ -34,7 +34,7 @@ def start_game():
 @app.route("/api/guess/", methods=["POST"])
 def guess_word():
     try:
-        guess = request.form["guess"]
+        guess = request.get_json(force=True)["guess"]
         assert len(guess) == 5
         assert guess.isalpha()
         assert word_is_valid(guess)

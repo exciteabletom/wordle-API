@@ -6,9 +6,17 @@
     --color-absent: #3a3a3c;
     --color-present: #b59f3b;
     --color-correct: #538d4e;
+
+    --color-text: #e1dede;
+
+    --keyboard-button-size: 3rem;
+
+    font-family: ReadexPro, sans-serif;
+    color: var(--color-text);
 }
 
 body {
+    margin: 0;
     background: var(--color-bg);
 }
 
@@ -64,6 +72,50 @@ body {
     background: var(--color-present);
 }
 
-.cell-correct{
+.cell-correct {
     background: var(--color-correct);
+}
+
+.simple-keyboard-wrapper {
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+
+    width: 100%;
+    height: 20vh;
+
+    margin: 0;
+    color: #000;
+    position: absolute;
+    bottom: 0;
+
+    font-size: calc(var(--keyboard-button-size) / 2);
+}
+
+/* override default keyboard theme with !important */
+.keyboard-theme {
+    max-width: 700px !important;
+    background-color: var(--color-bg) !important;
+    color: var(--color-text) !important;
+    font-family: inherit !important;
+
+    text-transform: capitalize;
+    font-weight: bold;
+    justify-content: center;
+}
+
+.keyboard-theme .hg-button {
+    background-color: var(--color-accent) !important;
+    border: none !important;
+    width: auto !important;
+    max-width: max-content !important;
+    min-width: var(--keyboard-button-size) !important;
+    height: var(--keyboard-button-size) !important;
+}
+
+.keyboard-theme .hg-button:hover, .keyboard-theme .hg-button:disabled {
+    background-color: var(--color-accent-alt) !important;
+}
+.keyboard-theme .hg-row {
+   justify-content: center !important;
 }
