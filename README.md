@@ -16,7 +16,7 @@ This means that it is **impossible to cheat**, the answer is never stored in the
 Even looking at the backend source code will not reveal the answer, as the wordlist is shuffled before it is inserted into the database.
 
 ## Public API
-If you want, you can use the API at https://word.digitalnook.net/api/v1 to create your own Wordle game!
+You can use the public API to make your own Wordle game! Also feel free to copy the backend code and self-host it.
 
 ## API Documentation
 If you need any help with using this API, please feel free to open an issue!
