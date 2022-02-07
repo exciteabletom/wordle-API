@@ -5,15 +5,15 @@ from werkzeug.exceptions import abort
 from sql import get_sql
 
 
-def get_word_info(word_id=None):
+def get_answer_info(word_id=None):
     con, cur = get_sql()
 
     if not word_id:
-        length = cur.execute("""SELECT Count(*) FROM wordList""").fetchone()[0]
+        length = cur.execute("""SELECT Count(*) FROM answerList """).fetchone()[0]
         word_id = randint(0, length - 1)
 
     word = cur.execute(
-        """SELECT word FROM wordList WHERE id = (?)""", (word_id,)
+        """SELECT word FROM answerList WHERE id = (?)""", (word_id,)
     ).fetchone()[0]
     return word_id, word
 

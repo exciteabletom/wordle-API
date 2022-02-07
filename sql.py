@@ -22,6 +22,12 @@ def init_db():
         );
         """,
         """
+        CREATE TABLE answerList (
+            id INTEGER NOT NULL PRIMARY KEY,
+            word TEXT NOT NULL
+        );
+        """,
+        """
         CREATE TABLE game (
             id INTEGER NOT NULL PRIMARY KEY,
             word TEXT NOT NULL,
@@ -36,18 +42,24 @@ def init_db():
     for schema in schemas:
         cur.execute(schema)
 
-    con.commit()
-
-    # Use set for "var in word_set"
-    # Use list for everything else
     word_list = open("word_list.txt", "r").read().split("\n")
-
+    answer_list = open("answer_list.txt", "r").read().split("\n")
     random.shuffle(word_list)
+    random.shuffle(answer_list)
 
     for word in word_list:
         cur.execute(
             """
             INSERT INTO wordList (word)
+            VALUES (?);
+        """,
+            (word,),
+        )
+
+    for word in answer_list:
+        cur.execute(
+            """
+            INSERT INTO answerList (word)
             VALUES (?);
         """,
             (word,),

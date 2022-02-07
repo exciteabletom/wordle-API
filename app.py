@@ -3,7 +3,7 @@ import uuid
 
 from flask import Flask, render_template, request, abort
 
-from utils import set_finished, get_answer, word_is_valid, id_or_400, get_word_info
+from utils import set_finished, get_answer, word_is_valid, id_or_400, get_answer_info
 from sql import get_sql
 
 app = Flask(__name__)
@@ -37,7 +37,7 @@ def start_game():
 
     key = str(uuid.uuid1())
 
-    word_id, word = get_word_info(word_id)
+    word_id, word = get_answer_info(word_id)
 
     cur.execute("""INSERT INTO game (word, key) VALUES (?, ?)""", (word, key))
     con.commit()
