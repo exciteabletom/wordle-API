@@ -87,3 +87,7 @@ If you don't include `wordID`, a random word is chosen.
 }
 ```
 After calling this, you will be unable to make more guesses as the answer has been revealed.
+
+## Developing
+Install all the requirements with `python3 -m pip install -r requirements.txt -r requirements-dev.txt`
+To download the libraries and setup an empty db, run `python3 init.py`
