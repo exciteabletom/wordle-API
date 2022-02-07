@@ -91,6 +91,8 @@ After calling this, you will be unable to make more guesses as the answer has be
 ## Developing
 Install all the requirements with `python3 -m pip install -r requirements.txt -r requirements-dev.txt`
 
+Install pre-commit `pre-commit install`
+
 To download the libraries and setup an empty db, run `python3 init.py`
 
 Run the dev server with `FLASK_DEBUG=1 flask run`
