@@ -17,7 +17,7 @@ function init_keyboard() {
             ]
         },
         display: {
-            "{enter}": "enter",
+            "{enter}": "⮐",
             "{bksp}": "backspace",
         },
     });
