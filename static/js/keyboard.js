@@ -12,13 +12,13 @@ function init_keyboard() {
         layout: {
             default: [
                 "q w e r t y u i o p",
-                "a s d f g h j k l {enter}",
-                "z x c v b n m {bksp}"
+                "a s d f g h j k l {bksp}",
+                "z x c v b n m {enter}"
             ]
         },
         display: {
-            "{enter}": "⮐",
-            "{bksp}": "backspace",
+            "{enter}": "enter",
+            "{bksp}": "←",
         },
     });
 

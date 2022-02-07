@@ -15,10 +15,10 @@
     <link href="{{ url_for("static", filename="css/keyboard.css") }}" type="text/css" rel="stylesheet">
 </head>
 <body>
-<header>
-    <h1>Welcome to Wordle!</h1>
-</header>
 <main id="vue-root">
+    <header>
+        <h1>Wordle #[[ gameID ]]</h1>
+    </header>
     <div id="game">
         <div class="game-row" v-for="row in grid">
             <div class="game-cell" v-bind:class="letterShading(letterObj)" v-for="letterObj in row">

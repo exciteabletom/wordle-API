@@ -24,18 +24,25 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *   SOFTWARE.
  */
+:root {
+    --keyboard-button-size: 3rem;
+}
+@media screen and (max-width: 800px ) {
+    :root {
+        --keyboard-button-size: 2.8rem;
+    }
+}
 
 .simple-keyboard-wrapper {
     display: flex;
     justify-content: center;
-    box-sizing: border-box;
+    box-sizing:content-box;
 
     max-width: 100%;
-
-    margin: 0;
+    margin: 0 2.5%;
     color: #000;
 
-    font-size: calc(var(--keyboard-button-size) / 2.2);
+    font-size: calc(var(--keyboard-button-size) / 2);
 }
 
 .keyboard-theme {
