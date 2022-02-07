@@ -4,26 +4,38 @@ from werkzeug.exceptions import abort
 
 from sql import get_sql
 
-# Use set for "var in word_set"
-# Use list for everything else
-word_list = open("word_list.txt", "r").read().split("\n")
-word_set = set(word_list)
 
+def get_word_info(word_id=None):
+    con, cur = get_sql()
 
-def random_word():
-    return word_list[randint(0, len(word_set) - 1)]
+    if not word_id:
+        length = cur.execute("""SELECT Count(*) FROM wordList""").fetchone()[0]
+        word_id = randint(0, length - 1)
+
+    word = cur.execute(
+        """SELECT word FROM wordList WHERE id = (?)""", (word_id,)
+    ).fetchone()[0]
+    return word_id, word
 
 
 def word_is_valid(word):
-    return word in word_set
+    con, cur = get_sql()
+    cur.execute("""SELECT word FROM wordList WHERE word = (?)""", (word,))
+    return bool(cur.fetchone())
 
 
-def get_id_or_400(request):
+def id_or_400(request):
     try:
         game_id = request.get_json(force=True)["id"]
-        game_id = int(game_id)
+        key = request.get_json(force=True)["key"]
+
+        con, cur = get_sql()
+        cur.execute("""SELECT key FROM game WHERE key = (?)""", (key,))
+        assert cur.fetchone()[0] == key
+        con.close()
+
         return game_id
-    except (KeyError, TypeError):
+    except (AssertionError, KeyError, TypeError):
         abort(400)
 
 
@@ -40,4 +52,4 @@ def get_answer(game_id):
     answer = cur.fetchone()
     con.close()
 
-    return answer
+    return answer[0]

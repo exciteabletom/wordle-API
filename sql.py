@@ -1,6 +1,7 @@
 """
 Module for handling the messy bits of SQL.
 """
+import random
 import sqlite3
 
 
@@ -13,15 +14,44 @@ def get_sql():
 def init_db():
     con, cur = get_sql()
 
-    cur.execute(
+    schemas = [
+        """
+        CREATE TABLE wordList (
+            id INTEGER NOT NULL PRIMARY KEY,
+            word TEXT NOT NULL
+        );
+        """,
         """
         CREATE TABLE game (
             id INTEGER NOT NULL PRIMARY KEY,
             word TEXT NOT NULL,
             finished BOOL NOT NULL DEFAULT false,
-            guesses TEXT default ""
+            guesses TEXT default "",
+            key TEXT NOT NULL,
+            FOREIGN KEY (word) REFERENCES wordList(word)
         );
-    """
-    )
+        """,
+    ]
+
+    for schema in schemas:
+        cur.execute(schema)
+
+    con.commit()
+
+    # Use set for "var in word_set"
+    # Use list for everything else
+    word_list = open("word_list.txt", "r").read().split("\n")
+
+    random.shuffle(word_list)
+
+    for word in word_list:
+        cur.execute(
+            """
+            INSERT INTO wordList (word)
+            VALUES (?);
+        """,
+            (word,),
+        )
+
     con.commit()
     con.close()

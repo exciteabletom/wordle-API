@@ -11,13 +11,25 @@
 
     --keyboard-button-size: 3rem;
 
-    font-family: ReadexPro, sans-serif;
     color: var(--color-text);
 }
 
 body {
     margin: 0;
     background: var(--color-bg);
+}
+
+h1 {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+main {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: center;
+    align-items: center;
+    max-height: 90vh;
 }
 
 #game {
@@ -28,8 +40,7 @@ body {
     grid-template-rows: repeat(6, 1fr);
     gap: 0.5rem;
 
-    margin-left: auto;
-    margin-right: auto;
+    margin-bottom: 2.5rem;
 }
 
 .game-row {
@@ -52,6 +63,7 @@ body {
     justify-content: center;
     align-items: center;
     border: 2px solid var(--color-accent-alt);
+    transition: background-color 300ms ease-in, border-color 300ms ease-in;
 }
 
 .game-cell > span {
@@ -59,63 +71,84 @@ body {
     text-transform: capitalize;
 }
 
-.cell-empty {
-    background: var(--color-bg);
+.empty {
+    background: var(--color-bg) !important;
     border-color: var(--color-accent);
 }
 
-.cell-absent {
-    background: var(--color-absent);
+.absent {
+    background: var(--color-absent) !important;
+    border-color: var(--color-absent);
 }
 
-.cell-present {
-    background: var(--color-present);
+.present {
+    background: var(--color-present) !important;
+    border-color: var(--color-present);
 }
 
-.cell-correct {
-    background: var(--color-correct);
+.correct {
+    background: var(--color-correct) !important;
+    border-color: var(--color-correct);
 }
 
-.simple-keyboard-wrapper {
+
+.end-popup-wrapper {
     display: flex;
     justify-content: center;
-    box-sizing: border-box;
-
-    width: 100%;
-    height: 20vh;
-
-    margin: 0;
-    color: #000;
+    align-items: center;
     position: absolute;
-    bottom: 0;
-
-    font-size: calc(var(--keyboard-button-size) / 2);
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
 }
 
-/* override default keyboard theme with !important */
-.keyboard-theme {
-    max-width: 700px !important;
-    background-color: var(--color-bg) !important;
-    color: var(--color-text) !important;
-    font-family: inherit !important;
+.end-popup {
+    border-radius: 10px;
+    padding: 3rem;
+    text-align: center;
+    background: var(--color-accent-alt);
+}
 
-    text-transform: capitalize;
+.button-choice {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-items: center;
+    height: 5rem;
+}
+
+.end-popup button {
+    color: var(--color-text);
+    background: var(--color-accent);
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    height: 2rem;
+}
+
+.end-popup button:hover {
+    cursor: pointer;
+}
+
+.disabled {
+    display: none;
+}
+
+.popup {
+    position: absolute;
+    width: max-content;
+    top: 40vh;
+    text-align: center;
+
     font-weight: bold;
-    justify-content: center;
-}
+    font-size: 1.5rem;
 
-.keyboard-theme .hg-button {
-    background-color: var(--color-accent) !important;
-    border: none !important;
-    width: auto !important;
-    max-width: max-content !important;
-    min-width: var(--keyboard-button-size) !important;
-    height: var(--keyboard-button-size) !important;
+    background: #000000aa;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
 }
-
-.keyboard-theme .hg-button:hover, .keyboard-theme .hg-button:disabled {
-    background-color: var(--color-accent-alt) !important;
-}
-.keyboard-theme .hg-row {
-   justify-content: center !important;
+.error {
+    color: red;
 }

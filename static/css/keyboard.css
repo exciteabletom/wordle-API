@@ -1,0 +1,119 @@
+/* This file has been adapted from the simple-keyboard project, MIT license notice is preserved below.
+ *
+ *   https://github.com/hodgef/simple-keyboard
+ *
+ *   MIT License
+ *
+ *   Copyright (c) 2019 Francisco Hodge and project contributors.
+ *
+ *   Permission is hereby granted, free of charge, to any person obtaining a copy
+ *   of this software and associated documentation files (the "Software"), to deal
+ *   in the Software without restriction, including without limitation the rights
+ *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *   copies of the Software, and to permit persons to whom the Software is
+ *   furnished to do so, subject to the following conditions:
+ *
+ *   The above copyright notice and this permission notice shall be included in all
+ *   copies or substantial portions of the Software.
+ *
+ *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *   SOFTWARE.
+ */
+
+.simple-keyboard-wrapper {
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+
+    max-width: 100%;
+
+    margin: 0;
+    color: #000;
+
+    font-size: calc(var(--keyboard-button-size) / 2.2);
+}
+
+.keyboard-theme {
+    padding: 5px;
+    overflow: hidden;
+    box-sizing: border-box;
+    border-radius: 6px;
+    width: 100%;
+    max-width: 700px;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: inherit;
+    text-transform: capitalize;
+    font-weight: bold;
+    text-align: center;
+    justify-content: center;
+
+    touch-action: manipulation;
+
+    user-select:none;
+    -ms-user-select:none;
+    -moz-user-select:none;
+    -webkit-user-select:none;
+}
+
+.keyboard-theme .hg-button {
+    display: flex;
+    transition: background-color ease-in 500ms;
+    background-color: var(--color-accent);
+    width: auto;
+    min-width: var(--keyboard-button-size);
+    height: var(--keyboard-button-size);
+
+    border: none;
+    max-width: max-content;
+    align-items: center;
+    border-radius: 5px;
+    box-shadow: 0 0 3px -1px rgba(0, 0, 0, .3);
+    box-sizing: border-box;
+    cursor: pointer;
+    justify-content: center;
+    padding: 5px;
+    outline: 0;
+}
+
+
+@media (hover: hover) {
+    .keyboard-theme .hg-button:hover {
+        background-color: var(--color-accent-alt) !important;
+    }
+}
+
+.keyboard-theme .hg-button span {
+    pointer-events: none
+}
+
+
+.keyboard-theme .hg-row {
+    display: flex;
+    justify-content: center;
+}
+
+.keyboard-theme .hg-row:not(:last-child) {
+    margin-bottom: 5px
+}
+
+.keyboard-theme .hg-row .hg-button:not(:last-child) {
+    margin-right: 5px
+}
+
+.keyboard-theme .hg-row .hg-button-container {
+    margin-right: 5px
+}
+
+.keyboard-theme .hg-row > div:last-child {
+    margin-right: 0
+}
+
+.keyboard-theme .hg-row .hg-button-container {
+    display: flex
+}

@@ -3,33 +3,58 @@
 class API {
     constructor(base_url = "/api") {
         this.base_url = base_url;
-    }
-
-    async return_or_error (resp) {
-        if (resp.ok) {
-            return await resp.json()
-        } else {
-            alert("HTTP ERROR: " + error)
+        this.headers = {
+            "Content-Type": "application/json",
         }
     }
 
-    async start_game() {
-        let resp = await fetch(`${this.base_url}/start_game/`, {method: "POST"});
-        await this.return_or_error(resp)
+    async start_game(wordID = "") {
+        let resp = await fetch(`${this.base_url}/start_game/`, {
+            method: "POST",
+            headers: this.headers,
+            body: JSON.stringify({
+                wordID: wordID,
+            })
+        });
+        if (resp.ok) {
+            return await resp.json();
+        }
     }
 
-    async guess(id, word) {
+    async finish_game(id, key) {
+        let resp = await fetch(`${this.base_url}/finish_game/`, {
+            method: "POST",
+            headers: this.headers,
+            body: JSON.stringify({
+                id: id,
+                key: key,
+            })
+        });
+        if (resp.ok) {
+            return await resp.json();
+        }
+    }
+
+    async guess(id, key, word) {
         let resp = await fetch(`${this.base_url}/guess/`, {
             method: "POST",
-            body: {
+            headers: this.headers,
+            body: JSON.stringify({
                 id: id,
+                key: key,
                 guess: word,
-            }.toJSON()
+            })
         })
-        return await this.return_or_error(resp);
+        if (resp.ok) {
+            return await resp.json()
+        } else if (resp.status === 400) {
+            app.errorPopup("Invalid word!")
+        } else if (resp.status === 404) {
+            app.errorPopup("This game has already finished")
+        } else if (resp.status === 500) {
+            app.errorPopup("A server error occurred :(")
+        }
     }
-
-
 }
 
 class Letter {
@@ -54,27 +79,39 @@ function init_word_grid() {
 window.app = new Vue({
     el: "#vue-root",
     data: {
-        grid: init_word_grid(),
-        currentRow: 0,
+        grid: null,
+        currentIndex: null,
         api: new API,
+        apiKey: null,
         gameID: null,
+        wordID: null,
         wordLength: 5,
-        finished: false,
+        answer: "",
+        error: "",
+        message: "",
     },
     delimiters: ['[[', ']]'],
     methods: {
-        letterShading: function(letterObj) {
-            return  {
-                "cell-empty": letterObj.state === 0 && !letterObj.letter,
-                "cell-absent": letterObj.state === 0 && letterObj.letter,
-                "cell-present": letterObj.state === 1,
-                "cell-correct": letterObj.state === 2,
+        letterShading(letterObj) {
+            return {
+                "empty": letterObj.state === 0 && !letterObj.letter,
+                "absent": letterObj.state === 0 && letterObj.letter,
+                "present": letterObj.state === 1,
+                "correct": letterObj.state === 2,
             }
         },
-        getRow: function() {
-            return this.grid[this.currentRow];
+        popup(message) {
+            this.message = message;
+            setTimeout(() => this.message = "", 1250);
         },
-        backspace: function() {
+        errorPopup(error) {
+            this.error = error;
+            setTimeout(() => this.error = "", 1250);
+        },
+        getRow() {
+            return this.grid[this.currentIndex];
+        },
+        backspace() {
             let row = this.getRow();
 
             // If array is full
@@ -86,13 +123,14 @@ window.app = new Vue({
             for (let i = 0; i < row.length; i++) {
                 if (row[i].letter === "") {
                     try {
-                        row[i-1].letter = "";
-                    } catch {} // in case index isn't valid
+                        row[i - 1].letter = "";
+                    } catch {
+                    } // in case index isn't valid
                     return;
                 }
             }
         },
-        addLetter: function(letter) {
+        addLetter(letter) {
             let row = this.getRow();
             for (let i = 0; i < row.length; i++) {
                 if (row[i].letter === "") {
@@ -101,14 +139,111 @@ window.app = new Vue({
                 }
             }
         },
-        guessWord: function() {
-            const word = this.grid[this.currentRow].toString();
-            this.api.guess(word)
-        },
-        reset: async function () {
-            this.gameID = (await this.api.start_game())["id"];
-        }
+        async guessWord() {
+            let row = this.getRow();
+            let word = row.map(val => {
+                return val.letter
+            }).join("");
+            if (word.length < 5) return;
 
+            const newRow = await this.api.guess(this.gameID, this.apiKey, word)
+            if (!newRow) {
+                return
+            }
+
+            let correct = true
+            newRow.forEach((val, idx) => {
+                row[idx].state = val.state;
+                if (row[idx].state !== 2) {
+                    correct = false;
+                }
+            })
+
+            styleKeys(row);
+
+            this.currentIndex += 1;
+            if (this.currentIndex >= 6 || correct) await this.finishGame();
+        },
+        async finishGame() {
+            const json = await this.api.finish_game(this.gameID, this.apiKey);
+            this.answer = json["answer"];
+        },
+        async reset() {
+            this.grid = init_word_grid()
+            this.answer = ""
+            this.currentIndex = 0;
+
+            if (!this.wordID) {
+                this.wordID = new URLSearchParams(window.location.search.slice(1)).get("g");
+            } else {
+                this.wordID = null;
+            }
+            // Remove old get params from url
+            history.replaceState({}, document.title, `${location.protocol}//${location.host}${location.pathname}`)
+
+            const startJson = await this.api.start_game(this.wordID);
+            this.gameID = startJson["id"];
+            this.apiKey = startJson["key"];
+            this.wordID = startJson["wordID"]
+
+            init_keyboard();
+        },
+        share() {
+            const absent_emoji = "⬛️";
+            const present_emoji = "🟨";
+            const correct_emoji = "🟩";
+
+            if (this.currentIndex >= this.grid.length) {
+                this.currentIndex = this.grid.length - 1;
+            }
+
+            let guesses = this.currentIndex;
+            this.grid[this.currentIndex].forEach(letterObj => {
+                if (letterObj.state !== 2) {
+                }
+                guesses = "X";
+            })
+
+            let game_string = `Tom's Wordle #${this.wordID}, ${guesses}/${this.grid.length}\n\n`
+
+            this.grid.forEach(row => {
+                row.forEach(letterObj => {
+                        switch (letterObj.state) {
+                            case 0:
+                                game_string += absent_emoji;
+                                break;
+                            case 1:
+                                game_string += present_emoji;
+                                break;
+                            case 2:
+                                game_string += correct_emoji;
+                                break;
+                        }
+                    }
+                )
+                game_string += "\n"
+            });
+            game_string += `Play this game: ${window.location.href}?g=${this.wordID}`
+            navigator.clipboard.writeText(game_string)
+                .then(() => {
+                    this.popup("Copied game to clipboard");
+                }, () => {
+                    let textArea = document.createElement("textarea");
+                    textArea.textContent = game_string;
+                    textArea.style.position = "fixed";
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand("copy");
+                        this.popup("Copied game to clipboard");
+                    } catch {
+                        this.errorPopup("Error copying game to clipboar");
+                    } finally {
+                        document.body.removeChild(textArea);
+                    }
+                }
+            )
+        }
     },
     mounted() {
         this.reset();

@@ -11,3 +11,14 @@
     font-family: ReadexPro;
     font-weight: bold;
 }
+
+:root {
+    font-size: 18px;
+    font-family: ReadexPro, sans-serif;
+}
+
+@media (max-width: 600px), (max-height: 600px) {
+    :root {
+        font-size: 12px;
+    }
+}

@@ -3,16 +3,20 @@
 <head>
     {% include "meta.html" %}
     <title>Wordle</title>
-    <script src="{{ url_for("static", filename="/lib/vue-dev.js") }}"></script>
+    {% if debug %}
+        <script src="{{ url_for("static", filename="lib/vue.js") }}"></script>
+    {% else %}
+        <script src="{{ url_for("static", filename="lib/vue.min.js") }}"></script>
+    {% endif %}
     <script src="{{ url_for("static", filename="lib/simple-keyboard.js") }}"></script>
     <script src="{{ url_for("static", filename="js/wordle.js") }}" defer></script>
     <script src="{{ url_for("static", filename="js/keyboard.js") }}" defer></script>
 
-    <link href="{{ url_for("static", filename="lib/simple-keyboard.css") }}" type="text/css" rel="stylesheet">
+    <link href="{{ url_for("static", filename="css/keyboard.css") }}" type="text/css" rel="stylesheet">
 </head>
 <body>
 <header>
-    <h1>Tom's Wordle</h1>
+    <h1>Welcome to Wordle!</h1>
 </header>
 <main id="vue-root">
     <div id="game">
@@ -25,6 +29,18 @@
     <div class="simple-keyboard-wrapper">
         <div class="simple-keyboard"></div>
     </div>
+    <div class="end-popup-wrapper" v-if="answer">
+        <div class="end-popup">
+            <h2>Results</h2>
+            <p>Answer: [[ answer ]]</p>
+            <div class="button-choice">
+                <button v-on:click="reset">New Game</button>
+                <button v-on:click="share">Share Game</button>
+            </div>
+        </div>
+    </div>
+    <p class="popup error" v-if="error"> [[ error ]]</p>
+    <p class="popup" v-if="message"> [[ message ]]</p>
 </main>
 </body>
 </html>

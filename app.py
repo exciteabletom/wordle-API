@@ -1,11 +1,17 @@
 import json
+import uuid
 
 from flask import Flask, render_template, request, abort
 
-from utils import get_id_or_400, set_finished, get_answer, random_word, word_is_valid
+from utils import set_finished, get_answer, word_is_valid, id_or_400, get_word_info
 from sql import get_sql
 
 app = Flask(__name__)
+
+
+@app.context_processor
+def inject_debug():
+    return dict(debug=app.debug)
 
 
 # Frontend views
@@ -21,14 +27,23 @@ def start_game():
     Starts a new game
     :return: {"id": game_id}
     """
+    word_id = None
+    try:
+        word_id = int(request.json["wordID"])
+    except (KeyError, TypeError, ValueError):
+        pass
+
     con, cur = get_sql()
 
-    word = random_word()
-    cur.execute("""INSERT INTO game (word) VALUES (?)""", (word,))
+    key = str(uuid.uuid1())
+
+    word_id, word = get_word_info(word_id)
+
+    cur.execute("""INSERT INTO game (word, key) VALUES (?, ?)""", (word, key))
     con.commit()
     con.close()
 
-    return json.dumps({"id": cur.lastrowid})
+    return json.dumps({"id": cur.lastrowid, "key": key, "wordID": word_id})
 
 
 @app.route("/api/guess/", methods=["POST"])
@@ -41,7 +56,7 @@ def guess_word():
     except AssertionError:
         return abort(400, "Invalid word")
 
-    game_id = get_id_or_400(request)
+    game_id = id_or_400(request)
 
     con, cur = get_sql()
     cur.execute(
@@ -76,8 +91,8 @@ def guess_word():
 
         guess_status.append(
             {
-                "char": g_char,
-                "status": status_int,
+                "letter": g_char,
+                "state": status_int,
             }
         )
 
@@ -86,7 +101,7 @@ def guess_word():
 
 @app.route("/api/finish_game/", methods=["POST"])
 def finish_game():
-    game_id = get_id_or_400(request)
+    game_id = id_or_400(request)
     set_finished(game_id)
     answer = get_answer(game_id)
 
