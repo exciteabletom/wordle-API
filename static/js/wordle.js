@@ -1,7 +1,7 @@
 "use strict";
 
 class API {
-    constructor(base_url = "/api") {
+    constructor(base_url = "/api/v1") {
         this.base_url = base_url;
         this.headers = {
             "Content-Type": "application/json",

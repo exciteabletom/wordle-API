@@ -21,7 +21,7 @@ def index():
 
 
 # API endpoints
-@app.route("/api/start_game/", methods=["POST"])
+@app.route("/api/v1/start_game/", methods=["POST"])
 def start_game():
     """
     Starts a new game
@@ -46,7 +46,7 @@ def start_game():
     return json.dumps({"id": cur.lastrowid, "key": key, "wordID": word_id})
 
 
-@app.route("/api/guess/", methods=["POST"])
+@app.route("/api/v1/guess/", methods=["POST"])
 def guess_word():
     try:
         guess = request.get_json(force=True)["guess"]
@@ -99,7 +99,7 @@ def guess_word():
     return json.dumps(guess_status)
 
 
-@app.route("/api/finish_game/", methods=["POST"])
+@app.route("/api/v1/finish_game/", methods=["POST"])
 def finish_game():
     game_id = id_or_400(request)
     set_finished(game_id)

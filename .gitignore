@@ -4,5 +4,4 @@ venv/
 .venv/
 wordle.db
 .mypy_cache/
-/static/lib/vue.js
-/static/lib/vue.min.js
+/static/lib/
