@@ -4,4 +4,4 @@ venv/
 .venv/
 wordle.db
 .mypy_cache/
-/static/lib/
+static/lib/
