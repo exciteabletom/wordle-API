@@ -193,37 +193,34 @@ window.app = new Vue({
             const present_emoji = "🟨";
             const correct_emoji = "🟩";
 
-            if (this.currentIndex >= this.grid.length) {
-                this.currentIndex = this.grid.length - 1;
-            }
+            let guessNum = this.currentIndex;
 
-            let guesses = this.currentIndex;
-            this.grid[this.currentIndex].forEach(letterObj => {
+            this.grid[this.currentIndex - 1].forEach(letterObj => {
+                console.log(letterObj)
                 if (letterObj.state !== 2) {
+                    guessNum = "X";
                 }
-                guesses = "X";
             })
 
-            let game_string = `Tom's Wordle #${this.wordID}, ${guesses}/${this.grid.length}\n\n`
+            let game_string = `Wordle #${this.wordID}, ${guessNum}/${this.grid.length}\n`
 
-            this.grid.forEach(row => {
-                row.forEach(letterObj => {
-                        switch (letterObj.state) {
-                            case 0:
-                                game_string += absent_emoji;
-                                break;
-                            case 1:
-                                game_string += present_emoji;
-                                break;
-                            case 2:
-                                game_string += correct_emoji;
-                                break;
-                        }
-                    }
-                )
+            this.grid.slice(0, this.currentIndex).forEach(row => {
                 game_string += "\n"
+                row.forEach(letterObj => {
+                    switch (letterObj.state) {
+                        case 0:
+                            game_string += absent_emoji;
+                            break;
+                        case 1:
+                            game_string += present_emoji;
+                            break;
+                        case 2:
+                            game_string += correct_emoji;
+                            break;
+                    }
+                })
             });
-            game_string += `Play this game: ${window.location.href}?g=${this.wordID}`
+            game_string += `\nPlay this game: ${window.location.href}?g=${this.wordID}`
             navigator.clipboard.writeText(game_string)
                 .then(() => {
                     this.popup("Copied game to clipboard");
