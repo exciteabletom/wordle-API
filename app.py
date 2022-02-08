@@ -45,7 +45,7 @@ def start_game():
 
     con, cur = get_sql()
 
-    key = str(uuid.uuid1())
+    key = str(uuid.uuid4())
 
     word_id, word = get_answer_info(word_id)
 
