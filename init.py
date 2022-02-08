@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from urllib.request import urlretrieve
 
 from sql import init_db

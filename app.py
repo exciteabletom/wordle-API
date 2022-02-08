@@ -35,7 +35,6 @@ def index():
 def start_game():
     """
     Starts a new game
-    :return: {"id": game_id}
     """
     word_id = None
     try:
