@@ -140,29 +140,39 @@ window.app = new Vue({
             }
         },
         async guessWord() {
-            let row = this.getRow();
-            let word = row.map(val => {
-                return val.letter
-            }).join("");
-            if (word.length < 5) return;
+            // Prevent spamming guesses from running multiple guess API calls at the same time
+            if (this.guessInProgress) return;
+            try {
+                this.guessInProgress = true
 
-            const newRow = await this.api.guess(this.gameID, this.apiKey, word)
-            if (!newRow) {
-                return
-            }
+                let row = this.getRow();
+                let word = row.map(val => {
+                    return val.letter
+                }).join("");
+                if (word.length < 5) return;
 
-            let correct = true
-            newRow.forEach((val, idx) => {
-                row[idx].state = val.state;
-                if (row[idx].state !== 2) {
-                    correct = false;
+                const newRow = await this.api.guess(this.gameID, this.apiKey, word)
+                if (!newRow) {
+                    return
                 }
-            })
 
-            styleKeys(row);
+                let correct = true
+                newRow.forEach((val, idx) => {
+                    row[idx].state = val.state;
+                    if (row[idx].state !== 2) {
+                        correct = false;
+                    }
+                })
 
-            this.currentIndex += 1;
-            if (this.currentIndex >= 6 || correct) await this.finishGame();
+                styleKeys(row);
+
+                this.currentIndex += 1;
+                if (this.currentIndex >= 6 || correct) await this.finishGame();
+            } catch (e) {
+                throw(e);
+            } finally {
+                this.guessInProgress = false;
+            }
         },
         async finishGame() {
             const json = await this.api.finish_game(this.gameID, this.apiKey);
