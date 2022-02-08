@@ -1,5 +1,3 @@
-from random import randint
-
 from werkzeug.exceptions import abort
 
 from sql import get_sql
@@ -8,13 +6,15 @@ from sql import get_sql
 def get_answer_info(word_id=None):
     con, cur = get_sql()
 
-    if not word_id:
-        length = cur.execute("""SELECT Count(*) FROM answerList """).fetchone()[0]
-        word_id = randint(0, length - 1)
+    if word_id:
+        word = cur.execute(
+            """SELECT word FROM answerList WHERE id = (?)""", (word_id,)
+        ).fetchone()[0]
+    else:
+        word_id, word = cur.execute(
+            """SELECT id, word FROM answerList ORDER BY RANDOM() LIMIT 1"""
+        ).fetchone()
 
-    word = cur.execute(
-        """SELECT word FROM answerList WHERE id = (?)""", (word_id,)
-    ).fetchone()[0]
     return word_id, word
 
 

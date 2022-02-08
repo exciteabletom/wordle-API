@@ -12,6 +12,7 @@ def download_libs():
             "simple-keyboard.js",
         ),
     ]
+
     for lib in libs:
         urlretrieve(lib[0], f"static/lib/{lib[1]}")
 
