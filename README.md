@@ -6,7 +6,7 @@ See it in action [here](https://word.digitalnook.net).
 ## Why?
 The original Wordle game only allows you to play 1 game per day. It is also extremely easy to cheat as the answer to the puzzle is sent to the client before it has been solved.
 
-I wanted to create my own version that solves these issues.
+This version solves these issues.
 
 ## Architecture
 What's notable about this rendition of Wordle is that all of the guessing happens through a public server-side JSON api.
@@ -88,11 +88,19 @@ If you don't include `wordID`, a random word is chosen.
 ```
 After calling this, you will be unable to make more guesses as the answer has been revealed.
 
-## Developing
-Install all the requirements with `python3 -m pip install -r requirements.txt -r requirements-dev.txt`
+## Dev environment quick start
+`python3 -m venv .venv`
 
-Install pre-commit `pre-commit install`
+`. .venv/bin/activate`
 
-To download the libraries and setup an empty db, run `python3 init.py`
+`python3 -m pip install --upgrade wheel pip`
 
-Run the dev server with `FLASK_DEBUG=1 flask run`
+`python3 -m pip install -r requirements.txt -r requirements-dev.txt`
+
+`pre-commit install`
+
+`python3 init.py`
+
+`FLASK_DEBUG=1 flask run`
+
+The dev server is accessible on http://localhost:5000
