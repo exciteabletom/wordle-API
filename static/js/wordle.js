@@ -61,6 +61,7 @@ class Letter {
     constructor(letter = "", state = 0) {
         this.letter = letter;
         this.state = state;
+        this.submitted = false;
     }
 }
 
@@ -94,10 +95,11 @@ window.app = new Vue({
     methods: {
         letterShading(letterObj) {
             return {
-                "empty": letterObj.state === 0 && !letterObj.letter,
-                "absent": letterObj.state === 0 && letterObj.letter,
-                "present": letterObj.state === 1,
-                "correct": letterObj.state === 2,
+                "empty": !letterObj.letter,
+                "not-submitted": letterObj.letter && !letterObj.submitted,
+                "absent": letterObj.state === 0 && letterObj.submitted,
+                "present": letterObj.state === 1 && letterObj.submitted,
+                "correct": letterObj.state === 2 && letterObj.submitted,
             }
         },
         popup(message) {
@@ -158,6 +160,7 @@ window.app = new Vue({
 
                 let correct = true
                 newRow.forEach((val, idx) => {
+                    row[idx].submitted = true;
                     row[idx].state = val.state;
                     if (row[idx].state !== 2) {
                         correct = false;

@@ -6,6 +6,7 @@
     --color-absent: #3a3a3c;
     --color-present: #b59f3b;
     --color-correct: #538d4e;
+    --color-not-submitted: #222222;
 
     --color-text: #e1dede;
 
@@ -75,6 +76,10 @@ main {
     border-color: var(--color-accent);
 }
 
+.not-submitted {
+    background: var(--color-not-submitted) !important;
+    border-color: var(--color-not-submitted);
+}
 .absent {
     background: var(--color-absent) !important;
     border-color: var(--color-absent);
