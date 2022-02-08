@@ -6,3 +6,4 @@ wordle.db
 .mypy_cache/
 static/lib/*.js
 static/lib/*.css
+static_min/

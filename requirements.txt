@@ -1,3 +1,5 @@
 Flask~=2.0.2
 Werkzeug~=2.0.2
 Flask-Limiter~=2.1
+rjsmin~=1.2.0
+rcssmin~=1.1.0
