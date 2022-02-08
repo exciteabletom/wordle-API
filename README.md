@@ -9,7 +9,7 @@ The original Wordle game only allows you to play 1 game per day. It is also extr
 This version solves these issues.
 
 ## Architecture
-What's notable about this rendition of Wordle is that all of the guessing happens through a public server-side JSON api.
+What's notable about this rendition of Wordle is that all of the guessing happens through a server-side JSON api.
 
 This means that it is **impossible to cheat**, the answer is never stored in the browser before the puzzle has been finished.
 
