@@ -2,11 +2,20 @@ import json
 import uuid
 
 from flask import Flask, render_template, request, abort
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from utils import set_finished, get_answer, word_is_valid, id_or_400, get_answer_info
 from sql import get_sql
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
+
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+)
 
 
 @app.context_processor
@@ -22,6 +31,7 @@ def index():
 
 # API endpoints
 @app.route("/api/v1/start_game/", methods=["POST"])
+@limiter.limit("4/second;120/minute;600/hour;4000/day")
 def start_game():
     """
     Starts a new game
