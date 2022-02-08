@@ -15,33 +15,35 @@
     <link href="{{ url_for("static", filename="css/keyboard.css") }}" type="text/css" rel="stylesheet">
 </head>
 <body>
-<main id="vue-root">
+<div id="vue-root">
     <header>
         <h1>Wordle #[[ wordID ]]</h1>
     </header>
-    <div id="game">
-        <div class="game-row" v-for="row in grid">
-            <div class="game-cell" v-bind:class="letterShading(letterObj)" v-for="letterObj in row">
-                <span>[[ letterObj.letter ]]</span>
+    <main>
+        <div id="game">
+            <div class="game-row" v-for="row in grid">
+                <div class="game-cell" v-bind:class="letterShading(letterObj)" v-for="letterObj in row">
+                    <span>[[ letterObj.letter ]]</span>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="simple-keyboard-wrapper">
-        <div class="simple-keyboard"></div>
-    </div>
-    <div class="end-popup-wrapper" v-if="answer">
-        <div class="end-popup">
-            <h2>Results</h2>
-            <p>Answer: [[ answer ]]</p>
-            <div class="button-choice">
-                <button v-on:click="reset">New Game</button>
-                <button v-on:click="share">Share Game</button>
+        <div class="simple-keyboard-wrapper">
+            <div class="simple-keyboard"></div>
+        </div>
+        <div class="end-popup-wrapper" v-if="answer">
+            <div class="end-popup">
+                <h2>Results</h2>
+                <p>Answer: [[ answer ]]</p>
+                <div class="button-choice">
+                    <button v-on:click="reset">New Game</button>
+                    <button v-on:click="share">Share Game</button>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
     <p class="popup error" v-if="error"> [[ error ]]</p>
     <p class="popup" v-if="message"> [[ message ]]</p>
-</main>
+</div>
 <footer>
     <p href="https://github.com"></p>
 </footer>
