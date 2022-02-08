@@ -64,7 +64,9 @@ If you don't include `wordID`, a random word is chosen.
   ...
 ]
 ```
-`status` is an int of value `0`, `1`, or `2`. `0` means the letter is not present in the word. `1` means the letter is present in the word. `2` means the letter is present in the word **and** is in the correct position. For example: ⬛🟨🟨🟩⬛ is represented as `0 1 1 2 0`
+`status` is an int of value `0`, `1`, or `2`. `0` means the letter is not present in the word. `1` means the letter is present in the word. `2` means the letter is present in the word **and** is in the correct position. 
+
+For example: ⬛🟨🟨🟩⬛ is represented as `0 1 1 2 0`
 
 ### Errors
 - `400 Bad Request` if the word is the wrong length, contains non-letters, or is not in the dictionary
