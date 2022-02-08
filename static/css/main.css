@@ -107,6 +107,7 @@ main {
     padding: 3rem;
     text-align: center;
     background: var(--color-accent-alt);
+    font-size: 1.2rem;
 }
 
 .button-choice {
