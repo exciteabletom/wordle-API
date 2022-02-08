@@ -104,7 +104,7 @@ main {
 
 .end-popup {
     border-radius: 10px;
-    padding: 3rem;
+    padding: 2rem 3rem 3rem;
     text-align: center;
     background: var(--color-accent-alt);
     font-size: 1.2rem;
