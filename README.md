@@ -19,7 +19,7 @@ Even looking at the backend source code will not reveal the answer, as the wordl
 You can use the public API to make your own Wordle game! Also feel free to copy the backend code and self-host it.
 
 ## API Documentation
-If you need any help with using this API, please feel free to open an issue!
+If you need any help with using this API, please open an issue!
 
 ### POST `/api/v1/start_game/`
 ### Request body (optional)
