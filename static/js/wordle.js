@@ -46,13 +46,13 @@ class API {
             })
         })
         if (resp.ok) {
-            return await resp.json()
+            return await resp.json();
         } else if (resp.status === 400) {
-            app.errorPopup("Invalid word!")
+            app.errorPopup("Invalid word!");
         } else if (resp.status === 404) {
-            app.errorPopup("This game has already finished")
+            app.errorPopup("This game has already finished");
         } else if (resp.status === 500) {
-            app.errorPopup("A server error occurred :(")
+            app.errorPopup("A server error occurred :(");
         }
     }
 }
@@ -70,11 +70,11 @@ function init_word_grid() {
     for (let i = 0; i < 6; i++) {
         let row = [];
         for (let j = 0; j < 5; j++) {
-            row.push(new Letter)
+            row.push(new Letter);
         }
         grid.push(row);
     }
-    return grid
+    return grid;
 }
 
 window.app = new Vue({
@@ -182,8 +182,8 @@ window.app = new Vue({
             this.answer = json["answer"];
         },
         async reset() {
-            this.grid = init_word_grid()
-            this.answer = ""
+            this.grid = init_word_grid();
+            this.answer = "";
             this.currentIndex = 0;
 
             if (!this.wordID) {
@@ -192,12 +192,16 @@ window.app = new Vue({
                 this.wordID = null;
             }
             // Remove old get params from url
-            history.replaceState({}, document.title, `${location.protocol}//${location.host}${location.pathname}`)
+            history.replaceState(
+                {},
+                document.title,
+                `${location.protocol}//${location.host}${location.pathname}`
+            );
 
             const startJson = await this.api.start_game(this.wordID);
             this.gameID = startJson["id"];
             this.apiKey = startJson["key"];
-            this.wordID = startJson["wordID"]
+            this.wordID = startJson["wordID"];
 
             init_keyboard();
         },
@@ -215,7 +219,7 @@ window.app = new Vue({
                 }
             })
 
-            let game_string = `Wordle #${this.wordID}, ${guessNum}/${this.grid.length}\n`
+            let game_string = `Wordle #${this.wordID}, ${guessNum}/${this.grid.length}\n`;
 
             this.grid.slice(0, this.currentIndex).forEach(row => {
                 game_string += "\n"
@@ -233,11 +237,11 @@ window.app = new Vue({
                     }
                 })
             });
-            game_string += `\nPlay this game: ${window.location.href}?g=${this.wordID}`
+            game_string += `\nPlay this game: ${window.location.href}?g=${this.wordID}`;
             navigator.clipboard.writeText(game_string)
                 .then(() => {
                     this.popup("Copied game to clipboard");
-                }, () => {
+                }, () => { // Legacy fallback is async clipboard is not supported
                     let textArea = document.createElement("textarea");
                     textArea.textContent = game_string;
                     textArea.style.position = "fixed";
@@ -247,7 +251,7 @@ window.app = new Vue({
                         document.execCommand("copy");
                         this.popup("Copied game to clipboard");
                     } catch {
-                        this.errorPopup("Error copying game to clipboar");
+                        this.errorPopup("Error copying game to clipboard");
                     } finally {
                         document.body.removeChild(textArea);
                     }
