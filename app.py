@@ -89,13 +89,15 @@ def guess_word():
     con.close()
 
     guess_status = []
+    guessed_letters = []
 
     for g_pos, g_char in enumerate(guess):
         status_int = 0
-        if g_char in answer:
+        if g_char in answer and (answer.count(g_char) > guessed_letters.count(g_char)):
             status_int += 1
             for a_pos, a_char in enumerate(answer):
                 if g_char == a_char and g_pos == a_pos:
+                    guessed_letters += g_char
                     status_int += 1
 
         guess_status.append(
