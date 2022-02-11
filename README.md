@@ -64,7 +64,7 @@ If you don't include `wordID`, a random word is chosen.
   ...
 ]
 ```
-`status` is an int of value `0`, `1`, or `2`. `0` means the letter is not present in the word. `1` means the letter is present in the word. `2` means the letter is present in the word **and** is in the correct position. 
+`status` is an int of value `0`, `1`, or `2`. `0` means the letter is not present in the word. `1` means the letter is present in the word. `2` means the letter is present in the word **and** is in the correct position.
 
 For example: ⬛🟨🟨🟩⬛ is represented as `0 1 1 2 0`
 
@@ -103,6 +103,9 @@ After calling this, you will be unable to make more guesses as the answer has be
 
 `python3 init.py`
 
-`FLASK_DEBUG=1 flask run`
+`FLASK_DEBUG=1 flask run --cert=adhoc --host=0.0.0.0`
 
-The dev server is accessible on http://localhost:5000
+The dev server is accessible on https://localhost:5000.
+
+https is necessary for the async clipboard API to work on IOS.
+You may have to click through a warning about an invalid certificate.
