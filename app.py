@@ -1,7 +1,7 @@
 import json
 import uuid
 
-from flask import Flask, render_template, request, abort
+from flask import Flask, render_template, request, abort, make_response
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -16,6 +16,12 @@ limiter = Limiter(
     app,
     key_func=get_remote_address,
 )
+
+
+def api_response(json_data):
+    resp = make_response(json.dumps(json_data))
+    resp.content_type = "application/json; charset=utf-8"
+    return resp
 
 
 @app.context_processor
@@ -52,7 +58,7 @@ def start_game():
     con.commit()
     con.close()
 
-    return json.dumps({"id": cur.lastrowid, "key": key, "wordID": word_id})
+    return api_response({"id": cur.lastrowid, "key": key, "wordID": word_id})
 
 
 @app.route("/api/v1/guess/", methods=["POST"])
@@ -107,7 +113,7 @@ def guess_word():
             }
         )
 
-    return json.dumps(guess_status)
+    return api_response(guess_status)
 
 
 @app.route("/api/v1/finish_game/", methods=["POST"])
@@ -116,7 +122,7 @@ def finish_game():
     set_finished(game_id)
     answer = get_answer(game_id)
 
-    return json.dumps({"answer": answer})
+    return api_response({"answer": answer})
 
 
 if __name__ == "__main__":
