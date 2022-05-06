@@ -96,24 +96,34 @@ def guess_word():
     con.commit()
     con.close()
 
-    guess_status = []
-    guessed_letters = []
+    guess_status = [{"letter": g_char, "state": 0} for g_char in guess]
+    guessed_pos = set()
+
+    for a_pos, a_char in enumerate(answer):
+        if a_char == guess[a_pos]:
+            guessed_pos.add(a_pos)
+            guess_status[a_pos] = {
+                "letter": guess[a_pos],
+                "state": 2,
+            }
 
     for g_pos, g_char in enumerate(guess):
-        status_int = 0
-        if g_char in answer and (answer.count(g_char) > guessed_letters.count(g_char)):
-            status_int += 1
-            for a_pos, a_char in enumerate(answer):
-                if g_char == a_char and g_pos == a_pos:
-                    guessed_letters += g_char
-                    status_int += 1
+        if g_char in answer and guess_status[g_pos]["state"] == 0:
 
-        guess_status.append(
-            {
-                "letter": g_char,
-                "state": status_int,
-            }
-        )
+            positions = []
+            f_pos = answer.find(g_char)
+            while f_pos != -1:
+                positions.append(f_pos)
+                f_pos = answer.find(g_char, f_pos + 1)
+
+            for pos in positions:
+                if pos not in guessed_pos:
+                    guess_status[g_pos] = {
+                        "letter": g_char,
+                        "state": 1,
+                    }
+                    guessed_pos.add(pos)
+                    break
 
     return api_response(guess_status)
 
