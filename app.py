@@ -109,7 +109,6 @@ def guess_word():
 
     for g_pos, g_char in enumerate(guess):
         if g_char in answer and guess_status[g_pos]["state"] == 0:
-
             positions = []
             f_pos = answer.find(g_char)
             while f_pos != -1:
