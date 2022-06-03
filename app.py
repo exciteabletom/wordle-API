@@ -7,7 +7,14 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from utils import set_finished, get_answer, word_is_valid, id_or_400, get_answer_info
+from utils import (
+    set_finished,
+    get_game_answer,
+    word_is_valid,
+    id_or_400,
+    get_answer_info,
+    get_random_answer,
+)
 from sql import get_sql
 
 app = Flask(__name__)
@@ -54,7 +61,10 @@ def start_game():
 
     key = str(uuid.uuid4())
 
-    word_id, word = get_answer_info(word_id)
+    if word_id:
+        word = get_answer_info(word_id)
+    else:
+        word_id, word = get_random_answer()
 
     cur.execute("""INSERT INTO game (word, key) VALUES (?, ?)""", (word, key))
     con.commit()
@@ -65,12 +75,9 @@ def start_game():
 
 @app.route("/api/v1/guess/", methods=["POST"])
 def guess_word():
-    try:
-        guess = request.get_json(force=True)["guess"]
-        assert len(guess) == 5
-        assert guess.isalpha()
-        assert word_is_valid(guess)
-    except AssertionError:
+    guess = request.get_json(force=True)["guess"]
+
+    if not (len(guess) == 5 and guess.isalpha() and word_is_valid(guess)):
         return abort(400, "Invalid word")
 
     game_id = id_or_400(request)
@@ -108,21 +115,24 @@ def guess_word():
             }
 
     for g_pos, g_char in enumerate(guess):
-        if g_char in answer and guess_status[g_pos]["state"] == 0:
-            positions = []
-            f_pos = answer.find(g_char)
-            while f_pos != -1:
-                positions.append(f_pos)
-                f_pos = answer.find(g_char, f_pos + 1)
+        if g_char not in answer or guess_status[g_pos]["state"] != 0:
+            continue
 
-            for pos in positions:
-                if pos not in guessed_pos:
-                    guess_status[g_pos] = {
-                        "letter": g_char,
-                        "state": 1,
-                    }
-                    guessed_pos.add(pos)
-                    break
+        positions = []
+        f_pos = answer.find(g_char)
+        while f_pos != -1:
+            positions.append(f_pos)
+            f_pos = answer.find(g_char, f_pos + 1)
+
+        for pos in positions:
+            if pos in guessed_pos:
+                continue
+            guess_status[g_pos] = {
+                "letter": g_char,
+                "state": 1,
+            }
+            guessed_pos.add(pos)
+            break
 
     return api_response(guess_status)
 
@@ -131,7 +141,7 @@ def guess_word():
 def finish_game():
     game_id = id_or_400(request)
     set_finished(game_id)
-    answer = get_answer(game_id)
+    answer = get_game_answer(game_id)
 
     return api_response({"answer": answer})
 

@@ -3,19 +3,24 @@ from werkzeug.exceptions import abort
 from sql import get_sql
 
 
-def get_answer_info(word_id=None):
+def get_random_answer():
     con, cur = get_sql()
 
-    if word_id:
-        word = cur.execute(
-            """SELECT word FROM answerList WHERE id = (?)""", (word_id,)
-        ).fetchone()[0]
-    else:
-        word_id, word = cur.execute(
-            """SELECT id, word FROM answerList ORDER BY RANDOM() LIMIT 1"""
-        ).fetchone()
+    word_id, word = cur.execute(
+        """SELECT id, word FROM answerList ORDER BY RANDOM() LIMIT 1"""
+    ).fetchone()
 
     return word_id, word
+
+
+def get_answer_info(word_id):
+    con, cur = get_sql()
+
+    word = cur.execute(
+        """SELECT word FROM answerList WHERE id = (?)""", (word_id,)
+    ).fetchone()
+
+    return word
 
 
 def word_is_valid(word):
@@ -46,7 +51,7 @@ def set_finished(game_id):
     con.close()
 
 
-def get_answer(game_id):
+def get_game_answer(game_id):
     con, cur = get_sql()
     cur.execute("""SELECT word FROM game WHERE id = (?)""", (game_id,))
     answer = cur.fetchone()
