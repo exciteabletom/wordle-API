@@ -6,12 +6,20 @@ import sqlite3
 
 
 def get_sql():
+    """
+    Gets a fresh sql connection and cursor to ./wordle.db
+
+    :rtype: tuple[sqlite3.Connection, sqlite3.Cursor]
+    """
     con: sqlite3.Connection = sqlite3.connect("wordle.db")
     cur: sqlite3.Cursor = con.cursor()
     return con, cur
 
 
 def init_db():
+    """
+    Initialises a new database in ./wordle.db
+    """
     con, cur = get_sql()
 
     schemas = [

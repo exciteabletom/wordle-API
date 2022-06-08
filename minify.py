@@ -11,7 +11,13 @@ from rjsmin import jsmin
 from rcssmin import cssmin
 
 
-def recurse_dir(directory):
+def recurse_dir(directory: Path):
+    """
+    Gets a list of every file contained within a directory and its subdirectories.
+    Similar to Unix find command.
+
+    :rtype: list
+    """
     files = []
     for child in directory.iterdir():
         if child.is_dir():

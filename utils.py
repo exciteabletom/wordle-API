@@ -1,9 +1,16 @@
+import flask
 from werkzeug.exceptions import abort
 
 from sql import get_sql
 
 
 def get_random_answer():
+    """
+    Retrieves a random answer from the answerList table
+
+    :rtype: tuple
+    :returns: A tuple of len 2: (word_id, word)
+    """
     con, cur = get_sql()
 
     word_id, word = cur.execute(
@@ -14,6 +21,11 @@ def get_random_answer():
 
 
 def get_answer_info(word_id):
+    """
+    Retrieves an answer from answerList that matches word_id
+
+    :rtype: str
+    """
     con, cur = get_sql()
 
     word = cur.execute(
@@ -24,12 +36,23 @@ def get_answer_info(word_id):
 
 
 def word_is_valid(word):
+    """
+    Checks if a word is contained in the wordList table.
+
+    :rtype: bool
+    :returns: True if it's in the table, otherwise false
+    """
     con, cur = get_sql()
     cur.execute("""SELECT word FROM wordList WHERE word = (?)""", (word,))
     return bool(cur.fetchone())
 
 
-def id_or_400(request):
+def id_or_400(request: flask.Request):
+    """
+    Returns the game id associated with the request. On failure, forces a 400 error response.
+
+    :rtype: int
+    """
     try:
         game_id = request.get_json(force=True)["id"]
         key = request.get_json(force=True)["key"]
@@ -45,6 +68,9 @@ def id_or_400(request):
 
 
 def set_finished(game_id):
+    """
+    Changes the status of a game to finished
+    """
     con, cur = get_sql()
     cur.execute("""UPDATE game SET finished = true WHERE id = (?) """, (game_id,))
     con.commit()
@@ -52,6 +78,11 @@ def set_finished(game_id):
 
 
 def get_game_answer(game_id):
+    """
+    Get's the answer associated with a game
+
+    :rtype: str
+    """
     con, cur = get_sql()
     cur.execute("""SELECT word FROM game WHERE id = (?)""", (game_id,))
     answer = cur.fetchone()
