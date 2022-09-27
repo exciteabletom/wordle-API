@@ -2,7 +2,7 @@ import itertools
 import logging
 from random import shuffle
 from typing import List, Optional, Tuple, Iterable
-
+from time import time
 from const import EXPRESSION_LENGTH
 
 logging.basicConfig(level=logging.DEBUG)
@@ -12,6 +12,7 @@ operators = [*"+-*/"]
 
 
 def generate_expressions() -> List[Tuple[str, int]]:
+    t0 = time()
     allowed_vals = list(range(10)) + operators
 
     # generate all possible expressions, including invalid ones
@@ -23,7 +24,7 @@ def generate_expressions() -> List[Tuple[str, int]]:
 
     filtered = list(filtered)
     shuffle(filtered)
-    logger.info(f"Generated {len(filtered)} expressions")
+    logger.info(f"Generated {len(filtered)} expressions in {time() - t0}s")
     return filtered
 
 

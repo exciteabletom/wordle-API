@@ -1,4 +1,5 @@
 import json
+import logging
 import uuid
 
 from flask import Flask, render_template, request, abort, make_response
@@ -7,10 +8,16 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from const import EXPRESSION_LENGTH
 from expressions import is_valid_expression, evalute_expression
-from sql import get_sql
-from utils import get_random_expression
-from utils import id_or_400
-from utils import set_finished, get_game_answer
+from sql import sql_context, init_db
+from utils import get_random_expression, get_game_id, set_finished_in_db, get_game_answer
+
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.WARN)
+
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+init_db()
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
@@ -35,27 +42,28 @@ def start_game():
     """Starts a new game"""
     game_id, expression = get_random_expression()
     result = evalute_expression(expression)
-    con, cur = get_sql()
     key = str(uuid.uuid4())
-    cur.execute("""INSERT INTO game (expression, key) VALUES (?, ?)""", (expression, key))
-    con.commit()
-    con.close()
+    with sql_context() as cur:
+        cur.execute("""INSERT INTO game (expression, key) VALUES (?, ?)""", (expression, key))
+        last_row_id = cur.lastrowid
 
-    return api_response({"id": cur.lastrowid, "key": key, "wordID": game_id, "result": result})
+    resp = {"id": last_row_id, "key": key, "wordID": game_id, "result": result}
+    logger.debug(f"route/start_game: {resp}")
+    return api_response(resp)
 
 
 @app.route("/api/v1/guess/", methods=["POST"])
 def guess_word():
     guess = request.get_json(force=True)["guess"]
 
-    if not (len(guess) == EXPRESSION_LENGTH and not guess.isalpha() and is_valid_expression(guess)):
+    if not (len(guess) == EXPRESSION_LENGTH and is_valid_expression(guess)):
         return abort(400, "Invalid expression!")
 
-    game_id = id_or_400(request)
+    game_id = get_game_id(request)
 
-    con, cur = get_sql()
-    cur.execute("""SELECT expression, guesses, finished FROM game WHERE id = (?)""", (game_id,))
-    answer, guesses, finished = cur.fetchone()
+    with sql_context() as cur:
+        cur.execute("""SELECT expression, guesses, finished FROM game WHERE id = (?)""", (game_id,))
+        answer, guesses, finished = cur.fetchone()
 
     guesses = guesses.split(",")
 
@@ -68,9 +76,8 @@ def guess_word():
     if guesses[0] == ",":
         guesses = guesses[1:]
 
-    cur.execute("""UPDATE game SET guesses = (?) WHERE id = (?)""", (guesses, game_id))
-    con.commit()
-    con.close()
+    with sql_context() as cur:
+        cur.execute("""UPDATE game SET guesses = (?) WHERE id = (?)""", (guesses, game_id))
 
     guess_status = [{"letter": g_char, "state": 0} for g_char in guess]
     guessed_pos = set()
@@ -103,16 +110,19 @@ def guess_word():
             guessed_pos.add(pos)
             break
 
+    logger.debug(f"route/guess_word: {guess_status}")
     return api_response(guess_status)
 
 
 @app.route("/api/v1/finish_game/", methods=["POST"])
 def finish_game():
-    game_id = id_or_400(request)
-    set_finished(game_id)
+    game_id = get_game_id(request)
+    set_finished_in_db(game_id)
     answer = get_game_answer(game_id)
+    resp = {"answer": answer}
 
-    return api_response({"answer": answer})
+    logger.debug(f"route/finish_game: {resp}")
+    return api_response(resp)
 
 
 if __name__ == "__main__":

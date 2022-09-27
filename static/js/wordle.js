@@ -1,5 +1,5 @@
 "use strict";
-const expressionLength=4;  //global variable
+const expressionLength=5;  //global variable
 
 class API {
     constructor(base_url = "/api/v1") {
@@ -68,7 +68,7 @@ class Letter {
 
 function init_word_grid() {
     let grid = [];
-    for (let i = 0; i < expressionLength+1; i++) {
+    for (let i = 0; i < 6; i++) {
         let row = [];
         for (let j = 0; j < expressionLength; j++) {
             row.push(new Letter);

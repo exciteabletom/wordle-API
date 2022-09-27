@@ -43,14 +43,13 @@ main {
     display: grid;
     grid-template-rows: repeat(6, 1fr);
     gap: 0.5rem;
-
-    margin-bottom: 2.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .game-row {
     width: max-content;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     align-content: center;
     gap: 0.5rem;
 }

@@ -1,23 +1,38 @@
 """Module for handling the messy bits of SQL."""
+import logging
+import os
 import sqlite3
+from contextlib import contextmanager
+from typing import ContextManager
 
+from const import DB_FILE, EXPRESSION_LENGTH
 from expressions import generate_expressions
 
-
-def get_sql():
-    """Gets a fresh sql connection and cursor to ./nerdle.db"""
-    con: sqlite3.Connection = sqlite3.connect("nerdle.db")
-    cur: sqlite3.Cursor = con.cursor()
-    return con, cur
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
-def init_db():
-    """
-    Initialises a new database in ./nerdle.db
-    """
-    con, cur = get_sql()
+@contextmanager
+def sql_context() -> ContextManager[sqlite3.Cursor]:
+    """Yeilds a fresh sql cursor to .db file"""
+    con = sqlite3.connect(DB_FILE)
+    cur = con.cursor()
+    try:
+        yield cur
+    finally:
+        con.commit()
+        con.close()
 
-    schemas = [
+
+def init_db(overwrite=True):
+    """Initialises a new database in .db file."""
+    logger.info(f"Initializing database with expression length={EXPRESSION_LENGTH}")
+
+    if os.path.exists(DB_FILE):
+        logger.info(f"Database {DB_FILE} already exists. Skipping.")
+        return
+
+    get_schema_cmds = [
         """DROP TABLE IF EXISTS answerList;""",
         """DROP TABLE IF EXISTS expressionList;""",
         """DROP TABLE IF EXISTS game;""",
@@ -39,17 +54,17 @@ def init_db():
         """,
     ]
 
-    for schema in schemas:
-        cur.execute(schema)
+    for get_schema_cmd in get_schema_cmds:
+        with sql_context() as cur:
+            cur.execute(get_schema_cmd)
 
-    for expression, answer in generate_expressions():
-        cur.execute(
-            """
-            INSERT INTO expressionList (expression)
-            VALUES (?);
-        """,
-            (expression,),
-        )
-
-    con.commit()
-    con.close()
+    for expression, _ in generate_expressions():
+        with sql_context() as cur:
+            cur.execute(
+                """
+                INSERT INTO expressionList (expression)
+                VALUES (?);
+            """,
+                (expression,),
+            )
+    logger.info(f"Database created.")
