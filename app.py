@@ -66,10 +66,12 @@ def guess_word():
     with sql_context() as cur:
         cur.execute("""SELECT expression, guesses, finished FROM game WHERE id = (?)""", (game_id,))
         answer, guesses, finished = cur.fetchone()
+    logger.info(f"got {(answer, guesses, finished)}")
 
     guesses = guesses.split(",")
 
-    if len(guesses) > EXPRESSION_LENGTH + 1 or finished:
+    if len(guesses) > 6 or finished:
+        logger.info("about to 403")
         return abort(403)
 
     guesses.append(guess)
@@ -80,6 +82,7 @@ def guess_word():
 
     with sql_context() as cur:
         cur.execute("""UPDATE game SET guesses = (?) WHERE id = (?)""", (guesses, game_id))
+    logger.info("executed update")
 
     guess_status = [{"letter": g_char, "state": 0} for g_char in guess]
     guessed_pos = set()
