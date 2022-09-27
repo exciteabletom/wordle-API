@@ -1,4 +1,5 @@
 "use strict";
+const expressionLength=4;  //global variable
 
 class API {
     constructor(base_url = "/api/v1") {
@@ -48,7 +49,7 @@ class API {
         if (resp.ok) {
             return await resp.json();
         } else if (resp.status === 400) {
-            app.errorPopup("Invalid word!");
+            app.errorPopup("Invalid expression!");
         } else if (resp.status === 404) {
             app.errorPopup("This game has already finished");
         } else if (resp.status === 500) {
@@ -67,9 +68,9 @@ class Letter {
 
 function init_word_grid() {
     let grid = [];
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < expressionLength+1; i++) {
         let row = [];
-        for (let j = 0; j < 5; j++) {
+        for (let j = 0; j < expressionLength; j++) {
             row.push(new Letter);
         }
         grid.push(row);
@@ -86,7 +87,8 @@ window.app = new Vue({
         apiKey: null,
         gameID: null,
         wordID: null,
-        wordLength: 5,
+        result: null,
+        wordLength: expressionLength,
         answer: "",
         error: "",
         message: "",
@@ -151,7 +153,7 @@ window.app = new Vue({
                 let word = row.map(val => {
                     return val.letter
                 }).join("");
-                if (word.length < 5) return;
+                if (word.length < this.wordLength) return;
 
                 const newRow = await this.api.guess(this.gameID, this.apiKey, word)
                 if (!newRow) {
@@ -170,7 +172,7 @@ window.app = new Vue({
                 styleKeys(row);
 
                 this.currentIndex += 1;
-                if (this.currentIndex >= 6 || correct) await this.finishGame();
+                if (this.currentIndex >= this.wordLength+1 || correct) await this.finishGame();
             } catch (e) {
                 throw(e);
             } finally {
@@ -202,6 +204,7 @@ window.app = new Vue({
             this.gameID = startJson["id"];
             this.apiKey = startJson["key"];
             this.wordID = startJson["wordID"];
+            this.result = startJson["result"];
 
             init_keyboard();
         },
@@ -213,7 +216,6 @@ window.app = new Vue({
             let guessNum = this.currentIndex;
 
             this.grid[this.currentIndex - 1].forEach(letterObj => {
-                console.log(letterObj)
                 if (letterObj.state !== 2) {
                     guessNum = "X";
                 }

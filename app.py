@@ -3,39 +3,24 @@ import uuid
 
 from flask import Flask, render_template, request, abort, make_response
 from flask_cors import CORS
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from utils import (
-    set_finished,
-    get_game_answer,
-    word_is_valid,
-    id_or_400,
-    get_answer_info,
-    get_random_answer,
-)
+from const import EXPRESSION_LENGTH
+from expressions import is_valid_expression, evalute_expression
 from sql import get_sql
+from utils import get_random_expression
+from utils import id_or_400
+from utils import set_finished, get_game_answer
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
 CORS(app)
-
-limiter = Limiter(
-    app,
-    key_func=get_remote_address,
-)
 
 
 def api_response(json_data):
     resp = make_response(json.dumps(json_data))
     resp.content_type = "application/json; charset=utf-8"
     return resp
-
-
-@app.context_processor
-def inject_debug():
-    return dict(debug=app.debug)
 
 
 # Frontend views
@@ -46,51 +31,35 @@ def index():
 
 # API endpoints
 @app.route("/api/v1/start_game/", methods=["POST"])
-@limiter.limit("4/second;120/minute;600/hour;4000/day")
 def start_game():
-    """
-    Starts a new game
-    """
-    word_id = None
-    try:
-        word_id = int(request.json["wordID"])
-    except (KeyError, TypeError, ValueError):
-        pass
-
+    """Starts a new game"""
+    game_id, expression = get_random_expression()
+    result = evalute_expression(expression)
     con, cur = get_sql()
-
     key = str(uuid.uuid4())
-
-    if word_id:
-        word = get_answer_info(word_id)
-    else:
-        word_id, word = get_random_answer()
-
-    cur.execute("""INSERT INTO game (word, key) VALUES (?, ?)""", (word, key))
+    cur.execute("""INSERT INTO game (expression, key) VALUES (?, ?)""", (expression, key))
     con.commit()
     con.close()
 
-    return api_response({"id": cur.lastrowid, "key": key, "wordID": word_id})
+    return api_response({"id": cur.lastrowid, "key": key, "wordID": game_id, "result": result})
 
 
 @app.route("/api/v1/guess/", methods=["POST"])
 def guess_word():
     guess = request.get_json(force=True)["guess"]
 
-    if not (len(guess) == 5 and guess.isalpha() and word_is_valid(guess)):
-        return abort(400, "Invalid word")
+    if not (len(guess) == EXPRESSION_LENGTH and not guess.isalpha() and is_valid_expression(guess)):
+        return abort(400, "Invalid expression!")
 
     game_id = id_or_400(request)
 
     con, cur = get_sql()
-    cur.execute(
-        """SELECT word, guesses, finished FROM game WHERE id = (?)""", (game_id,)
-    )
+    cur.execute("""SELECT expression, guesses, finished FROM game WHERE id = (?)""", (game_id,))
     answer, guesses, finished = cur.fetchone()
 
     guesses = guesses.split(",")
 
-    if len(guesses) > 6 or finished:
+    if len(guesses) > EXPRESSION_LENGTH + 1 or finished:
         return abort(403)
 
     guesses.append(guess)

@@ -1,61 +1,36 @@
+import logging
+from typing import Tuple
+
 import flask
 from werkzeug.exceptions import abort
 
 from sql import get_sql
 
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-def get_random_answer():
-    """
-    Retrieves a random answer from the answerList table
 
-    :rtype: tuple
-    :returns: A tuple of len 2: (word_id, word)
-    """
+def get_random_expression() -> Tuple[str, str]:
+    """Retrieves a random expression from the expressionList table."""
     con, cur = get_sql()
-
-    word_id, word = cur.execute(
-        """SELECT id, word FROM answerList ORDER BY RANDOM() LIMIT 1"""
-    ).fetchone()
-
-    return word_id, word
+    exp_id, expression = cur.execute("""SELECT id, expression FROM expressionList ORDER BY RANDOM() LIMIT 1""").fetchone()
+    logger.info(f"Fetched:{exp_id=} {expression=}")
+    return exp_id, expression
 
 
-def get_answer_info(word_id):
-    """
-    Retrieves an answer from answerList that matches word_id
-
-    :rtype: str
-    """
+def get_answer_info(game_id):
+    """Retrieves an answer from answerList that matches word_id"""
     con, cur = get_sql()
-
-    word = cur.execute(
-        """SELECT word FROM answerList WHERE id = (?)""", (word_id,)
-    ).fetchone()
-
-    return word
-
-
-def word_is_valid(word):
-    """
-    Checks if a word is contained in the wordList table.
-
-    :rtype: bool
-    :returns: True if it's in the table, otherwise false
-    """
-    con, cur = get_sql()
-    cur.execute("""SELECT word FROM wordList WHERE word = (?)""", (word,))
-    return bool(cur.fetchone())
+    answer = cur.execute("""SELECT answer FROM answerList WHERE id = (?)""", (game_id,)).fetchone()
+    return answer
 
 
 def id_or_400(request: flask.Request):
-    """
-    Returns the game id associated with the request. On failure, forces a 400 error response.
-
-    :rtype: int
-    """
+    """Returns the game id associated with the request. On failure, forces a 400 error response."""
     try:
         game_id = request.get_json(force=True)["id"]
         key = request.get_json(force=True)["key"]
+        logger.info(f"Got game: {game_id}, {key}")
 
         con, cur = get_sql()
         cur.execute("""SELECT key FROM game WHERE key = (?)""", (key,))
@@ -68,9 +43,7 @@ def id_or_400(request: flask.Request):
 
 
 def set_finished(game_id):
-    """
-    Changes the status of a game to finished
-    """
+    """Changes the status of a game to finished"""
     con, cur = get_sql()
     cur.execute("""UPDATE game SET finished = true WHERE id = (?) """, (game_id,))
     con.commit()
@@ -78,14 +51,9 @@ def set_finished(game_id):
 
 
 def get_game_answer(game_id):
-    """
-    Get's the answer associated with a game
-
-    :rtype: str
-    """
+    """Get's the answer associated with a game"""
     con, cur = get_sql()
-    cur.execute("""SELECT word FROM game WHERE id = (?)""", (game_id,))
+    cur.execute("""SELECT expression FROM game WHERE id = (?)""", (game_id,))
     answer = cur.fetchone()
     con.close()
-
     return answer[0]

@@ -11,14 +11,14 @@ function init_keyboard() {
         theme: "keyboard-theme hg-theme-default",
         layout: {
             default: [
-                "q w e r t y u i o p",
-                "a s d f g h j k l {bksp}",
-                "z x c v b n m {enter}"
+                "0 1 2 3 4",
+                "5 6 7 6 9",
+                "{enter} + - * / {bksp}",
             ]
         },
         display: {
-            "{enter}": "enter",
-            "{bksp}": "←",
+            "{enter}": "=",
+            "{bksp}": "⌫",
         },
     });
 
@@ -48,7 +48,7 @@ document.addEventListener("keydown", ev => {
             onKeyPress("{bksp}");
             break;
         default:
-            if ("qwlertyuiopasdfghjklzxcvbnm".includes(ev.key)) {
+            if ("0123456789+-*/".includes(ev.key)) {
                onKeyPress(ev.key);
             }
             break;

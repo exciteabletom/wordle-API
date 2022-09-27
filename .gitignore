@@ -2,8 +2,10 @@ __pycache__/
 .idea/
 venv/
 .venv/
-wordle.db
+*.db
 .mypy_cache/
 static/lib/*.js
 static/lib/*.css
 static_min/
+tmp/
+.ipynb/

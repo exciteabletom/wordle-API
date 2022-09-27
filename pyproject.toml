@@ -1,0 +1,5 @@
+[tool.black]
+line-length = 110
+skip-string-normalization = true
+target-version = ['py38']
+include = '\.py'
