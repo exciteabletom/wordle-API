@@ -1,5 +1,5 @@
 "use strict";
-const expressionLength=5;  //global variable
+const expressionLength=4;  //global variable
 
 class API {
     constructor(base_url = "/api/v1") {

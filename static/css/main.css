@@ -49,7 +49,7 @@ main {
 .game-row {
     width: max-content;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     align-content: center;
     gap: 0.5rem;
 }
