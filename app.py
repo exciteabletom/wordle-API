@@ -4,13 +4,14 @@ import uuid
 
 from flask import Flask, render_template, request, abort, make_response
 
-# from flask_cors import CORS
-# from werkzeug.middleware.proxy_fix import ProxyFix
-
 from const import EXPRESSION_LENGTH
 from expressions import is_valid_expression, evalute_expression
+from initialize import download_js_libs
 from sql import sql_context, init_db
 from utils import get_random_expression, get_game_id, set_finished_in_db, get_game_answer
+
+# from flask_cors import CORS
+# from werkzeug.middleware.proxy_fix import ProxyFix
 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.WARN)
@@ -19,6 +20,7 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 init_db()
+download_js_libs()
 
 app = Flask(__name__)
 # app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)

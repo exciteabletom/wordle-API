@@ -4,7 +4,7 @@ from urllib.request import urlretrieve
 from sql import init_db
 
 
-def download_libs():
+def download_js_libs():
     # fmt: off
     libs = [
         ("https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js", "vue.js"),
@@ -17,10 +17,6 @@ def download_libs():
         urlretrieve(lib[0], f"static/lib/{lib[1]}")
 
 
-def init():
-    init_db()
-    download_libs()
-
-
 if __name__ == "__main__":
-    init()
+    init_db()
+    download_js_libs()
