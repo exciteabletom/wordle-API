@@ -3,8 +3,9 @@ import logging
 import uuid
 
 from flask import Flask, render_template, request, abort, make_response
-from flask_cors import CORS
-from werkzeug.middleware.proxy_fix import ProxyFix
+
+# from flask_cors import CORS
+# from werkzeug.middleware.proxy_fix import ProxyFix
 
 from const import EXPRESSION_LENGTH
 from expressions import is_valid_expression, evalute_expression
@@ -20,8 +21,8 @@ logger = logging.getLogger(__name__)
 init_db()
 
 app = Flask(__name__)
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
-CORS(app)
+# app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
+# CORS(app)
 
 
 def api_response(json_data):
