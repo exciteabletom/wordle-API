@@ -16,7 +16,7 @@ def get_random_expression() -> Tuple[str, str]:
         expression_id, expression = cur.execute(
             """SELECT id, expression FROM expressionList ORDER BY RANDOM() LIMIT 1"""
         ).fetchone()
-    logger.info(f"Fetched: {expression_id=} {expression=}")
+    logger.info(f"Fetched expression_id: {expression_id} expression: {expression}")
     return expression_id, expression
 
 
