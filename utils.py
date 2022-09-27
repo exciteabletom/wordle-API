@@ -30,11 +30,11 @@ def get_game_id(request: flask.Request) -> str:
         with sql_context() as cur:
             cur.execute("""SELECT key FROM game WHERE key = (?)""", (key,))
             if not cur.fetchone()[0] == key:
-                abort(400, "Somethings went wrong!")
+                abort(400, "Something went wrong!")
 
         return game_id
     except (KeyError, TypeError):
-        abort(400, "Somethings went wrong!")
+        abort(400, "Something went wrong!")
 
 
 def set_finished_in_db(game_id):

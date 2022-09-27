@@ -6,7 +6,6 @@ from flask import Flask, render_template, request, abort, make_response
 
 from const import EXPRESSION_LENGTH
 from expressions import is_valid_expression, evalute_expression
-from initialize import download_js_libs
 from sql import sql_context, init_db
 from utils import get_random_expression, get_game_id, set_finished_in_db, get_game_answer
 
@@ -20,7 +19,6 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 init_db()
-download_js_libs()
 
 app = Flask(__name__)
 # app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
@@ -60,6 +58,7 @@ def guess_word():
     guess = request.get_json(force=True)["guess"]
 
     if not (len(guess) == EXPRESSION_LENGTH and is_valid_expression(guess)):
+        logger.info(f"Invalid expression with guess: {guess}")
         return abort(400, "Invalid expression!")
 
     game_id = get_game_id(request)

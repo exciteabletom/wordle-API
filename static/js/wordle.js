@@ -172,7 +172,7 @@ window.app = new Vue({
                 styleKeys(row);
 
                 this.currentIndex += 1;
-                if (this.currentIndex >= this.wordLength+1 || correct) await this.finishGame();
+                if (this.currentIndex >= 6 || correct) await this.finishGame();
             } catch (e) {
                 throw(e);
             } finally {
