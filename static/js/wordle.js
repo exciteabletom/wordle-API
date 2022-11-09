@@ -213,7 +213,6 @@ window.app = new Vue({
             let guessNum = this.currentIndex;
 
             this.grid[this.currentIndex - 1].forEach(letterObj => {
-                console.log(letterObj)
                 if (letterObj.state !== 2) {
                     guessNum = "X";
                 }
