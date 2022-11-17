@@ -145,7 +145,7 @@ window.app = new Vue({
             // Prevent spamming guesses from running multiple guess API calls at the same time
             if (this.guessInProgress) return;
             try {
-                this.guessInProgress = true
+                this.guessInProgress = true;
 
                 let row = this.getRow();
                 let word = row.map(val => {
@@ -153,12 +153,12 @@ window.app = new Vue({
                 }).join("");
                 if (word.length < 5) return;
 
-                const newRow = await this.api.guess(this.gameID, this.apiKey, word)
+                const newRow = await this.api.guess(this.gameID, this.apiKey, word);
                 if (!newRow) {
-                    return
+                    return;
                 }
 
-                let correct = true
+                let correct = true;
                 newRow.forEach((val, idx) => {
                     row[idx].submitted = true;
                     row[idx].state = val.state;
@@ -221,7 +221,7 @@ window.app = new Vue({
             let game_string = `Wordle #${this.wordID}, ${guessNum}/${this.grid.length}\n`;
 
             this.grid.slice(0, this.currentIndex).forEach(row => {
-                game_string += "\n"
+                game_string += "\n";
                 row.forEach(letterObj => {
                     switch (letterObj.state) {
                         case 0:
@@ -240,7 +240,7 @@ window.app = new Vue({
             navigator.clipboard.writeText(game_string)
                 .then(() => {
                     this.popup("Copied game to clipboard");
-                }, () => { // Legacy fallback is async clipboard is not supported
+                }, () => { // Legacy fallback if async clipboard is not supported
                     let textArea = document.createElement("textarea");
                     textArea.textContent = game_string;
                     textArea.style.position = "fixed";
