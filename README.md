@@ -12,6 +12,27 @@ This means that it is impossible to know the answer without playing through the 
 
 Even looking at the backend source code will not reveal the answer, as the wordlist is shuffled before it is inserted into the database.
 
+## Dev environment quick start
+`python3 -m venv .venv`
+
+`. .venv/bin/activate`
+
+`python3 -m pip install --upgrade wheel pip`
+
+`python3 -m pip install -r requirements.txt -r requirements-dev.txt`
+
+`pre-commit install`
+
+`python3 init.py`
+
+`FLASK_DEBUG=1 flask run --cert=adhoc --host=0.0.0.0`
+
+The dev server is accessible on https://localhost:5000 and on your local IP address from another device.
+
+https is necessary for the async clipboard API to work on IOS.
+You may have to click through a warning about an invalid certificate.
+
+
 ## API Documentation
 If you need any help with using this API, please open an issue!
 
@@ -83,23 +104,3 @@ For example: ⬛🟨🟨🟩⬛ is represented as `0 1 1 2 0`
 }
 ```
 After calling this, you will be unable to make more guesses as the answer has been revealed.
-
-## Dev environment quick start
-`python3 -m venv .venv`
-
-`. .venv/bin/activate`
-
-`python3 -m pip install --upgrade wheel pip`
-
-`python3 -m pip install -r requirements.txt -r requirements-dev.txt`
-
-`pre-commit install`
-
-`python3 init.py`
-
-`FLASK_DEBUG=1 flask run --cert=adhoc --host=0.0.0.0`
-
-The dev server is accessible on https://localhost:5000 and on your local IP address from another device.
-
-https is necessary for the async clipboard API to work on IOS.
-You may have to click through a warning about an invalid certificate.
