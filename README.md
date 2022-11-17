@@ -1,22 +1,16 @@
 # Wordle API
-A public JSON API for Wordle. This repo also includes a frontend made with Vue.js.
+Public JSON API for Wordle with an example Vue.js [frontend](https://word.digitalnook.net).
 
-See it in action [here](https://word.digitalnook.net).
+This repo is a great base for making your own [variations](https://github.com/momonala/nerdle) of Wordle.
+Or you can use the API to quickly integrate Wordle logic into your own apps.
 
-## Why?
-The original Wordle game only allows you to play 1 game per day. It is also extremely easy to cheat as the answer to the puzzle is sent to the client before it has been solved.
-
-This version solves these issues.
 
 ## Architecture
-What's notable about this rendition of Wordle is that all of the guessing happens through a server-side JSON api.
+What's notable about this rendition of Wordle is that the guessing logic is completely server-side. As opposed to the original, which stores all the answers in the browser.
 
-This means that it is **impossible to cheat**, the answer is never stored in the browser before the puzzle has been finished.
+This means that it is impossible to know the answer without playing through the game.
 
 Even looking at the backend source code will not reveal the answer, as the wordlist is shuffled before it is inserted into the database.
-
-## Public API
-You can use the public API to make your own Wordle game! Also feel free to copy the backend code and self-host it.
 
 ## API Documentation
 If you need any help with using this API, please open an issue!
@@ -61,7 +55,7 @@ If you don't include `wordID`, a random word is chosen.
     "letter": char,
     "status": int
   },
-  ...
+  cont...
 ]
 ```
 `status` is an int of value `0`, `1`, or `2`. `0` means the letter is not present in the word. `1` means the letter is present in the word. `2` means the letter is present in the word **and** is in the correct position.
@@ -105,7 +99,7 @@ After calling this, you will be unable to make more guesses as the answer has be
 
 `FLASK_DEBUG=1 flask run --cert=adhoc --host=0.0.0.0`
 
-The dev server is accessible on https://localhost:5000.
+The dev server is accessible on https://localhost:5000 and on your local IP address from another device.
 
 https is necessary for the async clipboard API to work on IOS.
 You may have to click through a warning about an invalid certificate.
